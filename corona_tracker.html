@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<style>
+body {
+  background-color: lightblue;
+}
+</style>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Covid tracker</title>
+    <style>
+        
+    </style>
+</head>
+<body onload="auto()">
+    <h1>Corona case tracker web application made by Shubham Gupta</h1><br><br>
+<center>
+    <h2>Cases around the world</h2><br>
+    <table id="world_cases" width="80%" border="5">
+
+    </table>
+</center><br><br><br>
+    <center><table id="table_data" width="70%" border="4" bgcolor="white"></table></center><br><br>
+    <input type="number" id="ct_code" value="76" placeholder="Enter country code">
+<button onclick="av()" id="btn">check</button>
+<script>
+    av=()=>{
+        var a =document.getElementById("table_data");
+        a.style.borderColor="red";
+        
+        
+        fetch('https:api.covid19api.com/summary').then( (apidata)=>{
+            // console.log(apidata);
+            return apidata.json();
+        })
+        .then((actualdata)=>{
+            // console.log(actualdata);
+            // get data of api object
+            //countries is a object and array
+            var ct_code=document.getElementById("ct_code");
+            var c=actualdata.Countries[ct_code.value];
+            // console.log(actualdata.Countries[76]);
+            var a =document.getElementById("table_data");
+            var b=document.getElementById("world_cases");
+            
+            b.innerHTML=`<tr><td bgcolor="green">Total cases-`+actualdata.Global.TotalConfirmed+`</td><td bgcolor="pink">total deaths-`+actualdata.Global.TotalDeaths+`</td></tr>`+
+            `<tr><td bgcolor="pink">New cases-`+actualdata.Global.NewConfirmed+`</td><td bgcolor="yellow">new deaths-`+actualdata.Global.NewDeaths+`</td></tr>`
+            +`<tr><td bgcolor="yellow">Total recovered-`+actualdata.Global.TotalRecovered+`</td><td bgcolor="pink">today recovered-`+actualdata.Global.NewRecovered+`</td></tr>`
+            +`<tr><td bgcolor="pink">recovery rate-`+((actualdata.Global.TotalRecovered*100)/actualdata.Global.TotalConfirmed).toFixed(2)+` %</td><td bgcolor="yellow">deaths rate-`+((actualdata.Global.TotalDeaths*100)/actualdata.Global.TotalConfirmed).toFixed(2)+` %</td></tr>`;
+            
+            var d=(c.TotalRecovered*100)/c.TotalConfirmed;
+            a.innerHTML=`<td bgcolor="red"><center><font color="white"><b>`+c.Country+`<b></font></center></td><tr><td>total confirmed case-`+c.TotalConfirmed+`</td></tr><tr><td bgcolor="cyan"> total deaths-`+c.TotalDeaths+`</td></tr>`
+                        +`<tr><td >Total recovered case-`+c.TotalRecovered+`</td></tr>`
+                        +`<tr><td bgcolor="cyan">recovery rate-`+d.toFixed(2)+` %</td></tr>`
+                        +`<tr><td >new case-`+c.NewConfirmed+`</td></tr>`
+                        +`<tr><td bgcolor="cyan">new Deaths-`+c.NewDeaths+`</td></tr>`
+                        +`<tr><td >New recovered case-`+c.NewRecovered+`</td></tr>`;
+            
+                    })
+            .catch((error)=>{
+                // console.log(error);
+            });
+        }
+        auto=()=>{
+        setInterval(()=>{
+            document.getElementById("btn").click();
+        },500)
+    }
+            </script>
+			
+            </body>
+            </html>
